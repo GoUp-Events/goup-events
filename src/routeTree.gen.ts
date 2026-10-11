@@ -10,33 +10,193 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CadastroRouteImport } from './routes/cadastro'
+import { Route as DescobertaRouteImport } from './routes/descoberta'
+import { Route as FavoritosRouteImport } from './routes/favoritos'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as MapaRouteImport } from './routes/mapa'
+import { Route as MeusEventosRouteImport } from './routes/meus-eventos'
+import { Route as PerfilRouteImport } from './routes/perfil'
+import { Route as PlanosRouteImport } from './routes/planos'
+import { Route as EventosIndexRouteImport } from './routes/eventos.index'
+import { Route as EventosNovoRouteImport } from './routes/eventos.novo'
+import { Route as EventosIdIndexRouteImport } from './routes/eventos.$id.index'
+import { Route as EventosIdEditarRouteImport } from './routes/eventos.$id.editar'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CadastroRoute = CadastroRouteImport.update({
+  id: '/cadastro',
+  path: '/cadastro',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DescobertaRoute = DescobertaRouteImport.update({
+  id: '/descoberta',
+  path: '/descoberta',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FavoritosRoute = FavoritosRouteImport.update({
+  id: '/favoritos',
+  path: '/favoritos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MapaRoute = MapaRouteImport.update({
+  id: '/mapa',
+  path: '/mapa',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MeusEventosRoute = MeusEventosRouteImport.update({
+  id: '/meus-eventos',
+  path: '/meus-eventos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PerfilRoute = PerfilRouteImport.update({
+  id: '/perfil',
+  path: '/perfil',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PlanosRoute = PlanosRouteImport.update({
+  id: '/planos',
+  path: '/planos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EventosIndexRoute = EventosIndexRouteImport.update({
+  id: '/eventos/',
+  path: '/eventos/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EventosNovoRoute = EventosNovoRouteImport.update({
+  id: '/eventos/novo',
+  path: '/eventos/novo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EventosIdIndexRoute = EventosIdIndexRouteImport.update({
+  id: '/eventos/$id/',
+  path: '/eventos/$id/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EventosIdEditarRoute = EventosIdEditarRouteImport.update({
+  id: '/eventos/$id/editar',
+  path: '/eventos/$id/editar',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/cadastro': typeof CadastroRoute
+  '/descoberta': typeof DescobertaRoute
+  '/favoritos': typeof FavoritosRoute
+  '/login': typeof LoginRoute
+  '/mapa': typeof MapaRoute
+  '/meus-eventos': typeof MeusEventosRoute
+  '/perfil': typeof PerfilRoute
+  '/planos': typeof PlanosRoute
+  '/eventos/novo': typeof EventosNovoRoute
+  '/eventos/': typeof EventosIndexRoute
+  '/eventos/$id/editar': typeof EventosIdEditarRoute
+  '/eventos/$id/': typeof EventosIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/cadastro': typeof CadastroRoute
+  '/descoberta': typeof DescobertaRoute
+  '/favoritos': typeof FavoritosRoute
+  '/login': typeof LoginRoute
+  '/mapa': typeof MapaRoute
+  '/meus-eventos': typeof MeusEventosRoute
+  '/perfil': typeof PerfilRoute
+  '/planos': typeof PlanosRoute
+  '/eventos/novo': typeof EventosNovoRoute
+  '/eventos': typeof EventosIndexRoute
+  '/eventos/$id/editar': typeof EventosIdEditarRoute
+  '/eventos/$id': typeof EventosIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/cadastro': typeof CadastroRoute
+  '/descoberta': typeof DescobertaRoute
+  '/favoritos': typeof FavoritosRoute
+  '/login': typeof LoginRoute
+  '/mapa': typeof MapaRoute
+  '/meus-eventos': typeof MeusEventosRoute
+  '/perfil': typeof PerfilRoute
+  '/planos': typeof PlanosRoute
+  '/eventos/novo': typeof EventosNovoRoute
+  '/eventos/': typeof EventosIndexRoute
+  '/eventos/$id/editar': typeof EventosIdEditarRoute
+  '/eventos/$id/': typeof EventosIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/cadastro'
+    | '/descoberta'
+    | '/favoritos'
+    | '/login'
+    | '/mapa'
+    | '/meus-eventos'
+    | '/perfil'
+    | '/planos'
+    | '/eventos/novo'
+    | '/eventos/'
+    | '/eventos/$id/editar'
+    | '/eventos/$id/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/cadastro'
+    | '/descoberta'
+    | '/favoritos'
+    | '/login'
+    | '/mapa'
+    | '/meus-eventos'
+    | '/perfil'
+    | '/planos'
+    | '/eventos/novo'
+    | '/eventos'
+    | '/eventos/$id/editar'
+    | '/eventos/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/cadastro'
+    | '/descoberta'
+    | '/favoritos'
+    | '/login'
+    | '/mapa'
+    | '/meus-eventos'
+    | '/perfil'
+    | '/planos'
+    | '/eventos/novo'
+    | '/eventos/'
+    | '/eventos/$id/editar'
+    | '/eventos/$id/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CadastroRoute: typeof CadastroRoute
+  DescobertaRoute: typeof DescobertaRoute
+  FavoritosRoute: typeof FavoritosRoute
+  LoginRoute: typeof LoginRoute
+  MapaRoute: typeof MapaRoute
+  MeusEventosRoute: typeof MeusEventosRoute
+  PerfilRoute: typeof PerfilRoute
+  PlanosRoute: typeof PlanosRoute
+  EventosNovoRoute: typeof EventosNovoRoute
+  EventosIndexRoute: typeof EventosIndexRoute
+  EventosIdEditarRoute: typeof EventosIdEditarRoute
+  EventosIdIndexRoute: typeof EventosIdIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +208,107 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/cadastro': {
+      id: '/cadastro'
+      path: '/cadastro'
+      fullPath: '/cadastro'
+      preLoaderRoute: typeof CadastroRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/descoberta': {
+      id: '/descoberta'
+      path: '/descoberta'
+      fullPath: '/descoberta'
+      preLoaderRoute: typeof DescobertaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/favoritos': {
+      id: '/favoritos'
+      path: '/favoritos'
+      fullPath: '/favoritos'
+      preLoaderRoute: typeof FavoritosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mapa': {
+      id: '/mapa'
+      path: '/mapa'
+      fullPath: '/mapa'
+      preLoaderRoute: typeof MapaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/meus-eventos': {
+      id: '/meus-eventos'
+      path: '/meus-eventos'
+      fullPath: '/meus-eventos'
+      preLoaderRoute: typeof MeusEventosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/perfil': {
+      id: '/perfil'
+      path: '/perfil'
+      fullPath: '/perfil'
+      preLoaderRoute: typeof PerfilRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/planos': {
+      id: '/planos'
+      path: '/planos'
+      fullPath: '/planos'
+      preLoaderRoute: typeof PlanosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/eventos/': {
+      id: '/eventos/'
+      path: '/eventos'
+      fullPath: '/eventos/'
+      preLoaderRoute: typeof EventosIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/eventos/novo': {
+      id: '/eventos/novo'
+      path: '/eventos/novo'
+      fullPath: '/eventos/novo'
+      preLoaderRoute: typeof EventosNovoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/eventos/$id/': {
+      id: '/eventos/$id/'
+      path: '/eventos/$id'
+      fullPath: '/eventos/$id/'
+      preLoaderRoute: typeof EventosIdIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/eventos/$id/editar': {
+      id: '/eventos/$id/editar'
+      path: '/eventos/$id/editar'
+      fullPath: '/eventos/$id/editar'
+      preLoaderRoute: typeof EventosIdEditarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CadastroRoute: CadastroRoute,
+  DescobertaRoute: DescobertaRoute,
+  FavoritosRoute: FavoritosRoute,
+  LoginRoute: LoginRoute,
+  MapaRoute: MapaRoute,
+  MeusEventosRoute: MeusEventosRoute,
+  PerfilRoute: PerfilRoute,
+  PlanosRoute: PlanosRoute,
+  EventosNovoRoute: EventosNovoRoute,
+  EventosIndexRoute: EventosIndexRoute,
+  EventosIdEditarRoute: EventosIdEditarRoute,
+  EventosIdIndexRoute: EventosIdIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

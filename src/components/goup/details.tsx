@@ -1,0 +1,246 @@
+import { Link, useNavigate } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import {
+  CalendarDays,
+  Clock,
+  MapPin,
+  Heart,
+  User,
+  Tag,
+  ExternalLink,
+  Pencil,
+  Lock,
+  ArrowLeft,
+  Star,
+} from "lucide-react";
+import { api, ApiError } from "@/lib/api";
+import { dateLabel, money, ageLabels, canManage, priceLabels } from "@/lib/format";
+import { useAuth } from "./auth";
+import { EventCover, Kicker, Loading, Empty, ErrorState } from "./common";
+import { DeleteEvent } from "./account";
+import { Button } from "@/components/ui/button";
+export function DetailsPage({ id }: { id: string }) {
+  const auth = useAuth();
+  const navigate = useNavigate();
+  const [type, setType] = useState("");
+  const event = useQuery({
+    queryKey: ["event", id, auth.token],
+    queryFn: () => api.event(id, auth.token),
+    retry: false,
+  });
+  const nearby = useQuery({
+    queryKey: ["nearby", id, type, auth.token],
+    queryFn: () => api.nearby(id, type, auth.token),
+    enabled: !!event.data,
+    retry: false,
+  });
+  if (event.isPending)
+    return (
+      <div className="page wrap">
+        <Loading />
+      </div>
+    );
+  if (event.isError)
+    return (
+      <div className="page wrap">
+        {event.error instanceof ApiError && event.error.status === 404 ? (
+          <>
+            <Empty title="Evento não encontrado" description={event.error.message} />
+            <Button asChild className="mt-6">
+              <Link to="/eventos">Explorar eventos</Link>
+            </Button>
+          </>
+        ) : (
+          <ErrorState error={event.error} retry={() => void event.refetch()} />
+        )}
+      </div>
+    );
+  const e = event.data;
+  const maps = `https://www.google.com/maps/search/?api=1&query=${e.location.latitude},${e.location.longitude}&query_place_id=${encodeURIComponent(e.location.placeId)}`;
+  const manageable = canManage(e, auth.user);
+  return (
+    <div className="page wrap">
+      <Link to="/eventos" className="section-desc">
+        <ArrowLeft className="inline size-4 mr-2" />
+        Voltar aos eventos
+      </Link>
+      <div className="mt-7">
+        <Kicker>{e.category?.name ?? "VIVA UM NOVO MOMENTO"}</Kicker>
+        <h1>{e.title}</h1>
+      </div>
+      <div className="detail-grid">
+        <div>
+          <EventCover event={e} large />
+          <h2 className="section-title text-2xl">
+            Sobre o <span>evento.</span>
+          </h2>
+          <p className="detail-description">
+            {e.description || "O próximo momento está esperando por você."}
+          </p>
+          {manageable && (
+            <div className="flex gap-3 mt-7">
+              <Button asChild variant="outline">
+                <Link to="/eventos/$id/editar" params={{ id }}>
+                  <Pencil />
+                  Editar
+                </Link>
+              </Button>
+              <DeleteEvent event={e} onDeleted={() => void navigate({ to: "/meus-eventos" })} />
+            </div>
+          )}
+        </div>
+        <div>
+          <div className="detail-info">
+            <div className="detail-row">
+              <CalendarDays />
+              <div>
+                <b>Quando</b>
+                <p>{dateLabel(e.eventDate, true)}</p>
+              </div>
+            </div>
+            <div className="detail-row">
+              <Clock />
+              <div>
+                <b>Horário</b>
+                <p>
+                  {e.startTime.slice(0, 5)}
+                  {e.endTime ? ` – ${e.endTime.slice(0, 5)}` : ""}
+                </p>
+              </div>
+            </div>
+            <div className="detail-row">
+              <Tag />
+              <div>
+                <b>{money(e.price)}</b>
+                <p>Classificação: {ageLabels[e.ageRating] ?? e.ageRating}</p>
+              </div>
+            </div>
+            <div className="detail-row">
+              <User />
+              <div>
+                <b>Organizado por</b>
+                <p>{e.user.name}</p>
+              </div>
+            </div>
+            <div className="detail-row">
+              <MapPin />
+              <div>
+                <b>{e.location.name}</b>
+                <p>
+                  {e.location.formattedAddress ||
+                    [
+                      e.location.address,
+                      e.location.number,
+                      e.location.neighborhood,
+                      e.location.city,
+                      e.location.state,
+                      e.location.zip,
+                    ]
+                      .filter(Boolean)
+                      .join(", ")}
+                </p>
+                {e.location.rating != null && (
+                  <p>
+                    <Star className="inline size-3 text-secondary" />
+                    {String(e.location.rating).replace(".", ",")} ★ no Google
+                  </p>
+                )}
+              </div>
+            </div>
+            <Button
+              variant="outline"
+              onClick={() => auth.toggleFavorite(e.id)}
+              disabled={auth.favoritePending}
+            >
+              <Heart className={auth.favoriteIds.has(e.id) ? "fill-primary text-primary" : ""} />
+              {auth.favoriteIds.has(e.id) ? "Salvo nos favoritos" : "Guardar nos favoritos"}
+            </Button>
+            <Button asChild>
+              <a href={maps} target="_blank" rel="noreferrer">
+                Abrir no Google Maps <ExternalLink />
+              </a>
+            </Button>
+          </div>
+          <iframe
+            title={`Mapa de ${e.location.name}`}
+            className="embedded-map"
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            src={`https://maps.google.com/maps?q=${e.location.latitude},${e.location.longitude}&z=15&output=embed`}
+          />
+        </div>
+      </div>
+      <section className="section">
+        <Kicker>A EXPERIÊNCIA CONTINUA</Kicker>
+        <h2 className="section-title">
+          Perto do <span>evento.</span>
+        </h2>
+        <div className="chips">
+          {[
+            ["restaurant", "Restaurantes"],
+            ["cafe", "Cafés"],
+            ["bar", "Bares"],
+            ["bakery", "Padarias"],
+            ["tourist_attraction", "Atrações"],
+            ["park", "Parques"],
+          ].map(
+            ([value, label]) =>
+              value && (
+                <Button
+                  key={value}
+                  variant={type === value ? "secondary" : "outline"}
+                  size="sm"
+                  onClick={() => {
+                    if (auth.user?.premium) setType(type === value ? "" : value);
+                    else void navigate({ to: "/planos" });
+                  }}
+                >
+                  {!auth.user?.premium && <Lock size={12} />} {label}
+                </Button>
+              ),
+          )}
+        </div>
+        {nearby.isPending ? (
+          <Loading />
+        ) : nearby.isError ? (
+          <ErrorState error={nearby.error} retry={() => void nearby.refetch()} />
+        ) : !nearby.data.length ? (
+          <Empty title="Nenhum lugar próximo encontrado" />
+        ) : (
+          <div className="nearby-grid">
+            {nearby.data.map((place) => (
+              <article className="nearby-card" key={place.placeId}>
+                <MapPin className="text-primary mb-4" />
+                <h3>{place.name}</h3>
+                <p>{place.address}</p>
+                <p>
+                  {place.distanceMeters < 1000
+                    ? `${Math.round(place.distanceMeters)} m`
+                    : `${(place.distanceMeters / 1000).toFixed(1).replace(".", ",")} km`}
+                  {place.rating != null ? ` · ${String(place.rating).replace(".", ",")} ★` : ""}
+                  {place.userRatingCount != null ? ` (${place.userRatingCount})` : ""}
+                  {place.priceLevel
+                    ? ` · ${priceLabels[place.priceLevel] ?? place.priceLevel}`
+                    : ""}
+                </p>
+                <Button asChild variant="link">
+                  <a
+                    href={
+                      place.googleMapsUri ||
+                      `https://www.google.com/maps/search/?api=1&query=${place.latitude},${place.longitude}`
+                    }
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Ver no mapa <ExternalLink />
+                  </a>
+                </Button>
+              </article>
+            ))}
+          </div>
+        )}
+      </section>
+    </div>
+  );
+}
