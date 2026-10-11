@@ -1,12 +1,149 @@
-import { Link } from '@tanstack/react-router';
-import { useState,type ReactNode } from 'react';
-import { Menu,X,Moon,Sun,Plus,ArrowUpRight,MapPin } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { useAuth } from './auth';
-import logo from '@/assets/goup-logo.asset.json';
-export function Brand(){return <><span className="brand-go">Go</span><span className="brand-up">Up</span></>}
-export function Logo(){return <Link to="/" className="logo-frame" aria-label="GoUp Events — início"><img src={logo.url} alt="GoUp Events" width="90" height="70" /></Link>}
-export function SiteShell({children}:{children:ReactNode}) {
- const [open,setOpen]=useState(false);const auth=useAuth();
- return <><a className="skip-link" href="#conteudo">Pular para o conteúdo</a><header className="site-header"><div className="wrap header-inner"><Logo/><nav aria-label="Navegação principal" className={`nav ${open?'open':''}`} onClick={()=>setOpen(false)}><Link to="/" activeOptions={{exact:true}}>Início</Link><Link to="/eventos">Explorar eventos</Link><Link to="/mapa">Mapa</Link><Link to="/descoberta" className="relative"><span className="nav-premium">PREMIUM</span>Descoberta Mágica</Link><Link to="/favoritos">Favoritos</Link></nav><div className="header-actions"><Button variant="ghost" size="icon" aria-label={auth.dark?'Ativar tema claro':'Ativar tema escuro'} title={auth.dark?'Tema claro':'Tema escuro'} onClick={auth.toggleTheme}>{auth.dark?<Sun size={19}/>:<Moon size={19}/>}</Button>{auth.user?<><Button variant="ghost" asChild className="login-label"><Link to="/perfil">Olá, {auth.user.name.split(' ')[0]}</Link></Button><Button variant="ghost" onClick={auth.signOut} className="login-label">Sair</Button></>:<Button variant="ghost" asChild className="login-label"><Link to="/login">Entrar</Link></Button>}<Button asChild className="create-button"><Link to="/eventos/novo"><Plus size={17}/><span>Criar evento</span></Link></Button><Button variant="ghost" size="icon" className="mobile-menu-button" aria-label={open?'Fechar menu':'Abrir menu'} aria-expanded={open} onClick={()=>setOpen(!open)}>{open?<X/>:<Menu/>}</Button></div></div></header><main id="conteudo">{children}</main><footer className="footer"><div className="wrap"><div className="footer-grid"><div><Logo/><p>Mais que sair de casa. É descobrir o que faz a vida acontecer.</p></div><div><h4>EXPLORE</h4><ul><li><Link to="/eventos">Eventos</Link></li><li><Link to="/mapa">Mapa de experiências</Link></li><li><Link to="/descoberta">Descoberta Mágica <ArrowUpRight className="inline size-3"/></Link></li></ul></div><div><h4>GOUP</h4><ul><li><Link to="/planos">Conheça os planos</Link></li><li><Link to="/eventos/novo">Divulgue seu evento</Link></li><li><Link to="/perfil">Minha conta</Link></li></ul></div><div><h4 className="text-carmine"><MapPin className="inline size-3 mr-1"/> BLUMENAU É NOSSO LUGAR</h4><div className="footer-motto">Vá. Viva.<br/><Brand/>.</div></div></div><div className="footer-bottom"><span>© {new Date().getFullYear()} GoUp Events. Feito para descobrir.</span><span>Blumenau e região · Santa Catarina</span></div></div><div className="footer-stripe"/></footer></>;
+import { Link } from "@tanstack/react-router";
+import { useState, type ReactNode } from "react";
+import { Menu, X, Moon, Sun, Plus, ArrowUpRight, MapPin } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useAuth } from "./auth";
+import logo from "@/assets/goup-logo.asset.json";
+export function Brand() {
+  return (
+    <>
+      <span className="brand-go">Go</span>
+      <span className="brand-up">Up</span>
+    </>
+  );
+}
+export function Logo() {
+  return (
+    <Link to="/" className="logo-frame" aria-label="GoUp Events — início">
+      <img src={logo.url} alt="GoUp Events" width="90" height="70" />
+    </Link>
+  );
+}
+export function SiteShell({ children }: { children: ReactNode }) {
+  const [open, setOpen] = useState(false);
+  const auth = useAuth();
+  return (
+    <>
+      <a className="skip-link" href="#conteudo">
+        Pular para o conteúdo
+      </a>
+      <header className="site-header">
+        <div className="wrap header-inner">
+          <Logo />
+          <nav
+            aria-label="Navegação principal"
+            className={`nav ${open ? "open" : ""}`}
+            onClick={() => setOpen(false)}
+          >
+            <Link to="/" activeOptions={{ exact: true }}>
+              Início
+            </Link>
+            <Link to="/eventos">Explorar eventos</Link>
+            <Link to="/mapa">Mapa</Link>
+            <Link to="/descoberta" className="relative">
+              <span className="nav-premium">PREMIUM</span>Descoberta Mágica
+            </Link>
+            <Link to="/favoritos">Favoritos</Link>
+          </nav>
+          <div className="header-actions">
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label={auth.dark ? "Ativar tema claro" : "Ativar tema escuro"}
+              title={auth.dark ? "Tema claro" : "Tema escuro"}
+              onClick={auth.toggleTheme}
+            >
+              {auth.dark ? <Sun size={19} /> : <Moon size={19} />}
+            </Button>
+            {auth.user ? (
+              <>
+                <Button variant="ghost" asChild className="login-label">
+                  <Link to="/perfil">Olá, {auth.user.name.split(" ")[0]}</Link>
+                </Button>
+                <Button variant="ghost" onClick={auth.signOut} className="login-label">
+                  Sair
+                </Button>
+              </>
+            ) : (
+              <Button variant="ghost" asChild className="login-label">
+                <Link to="/login">Entrar</Link>
+              </Button>
+            )}
+            <Button asChild className="create-button">
+              <Link to="/eventos/novo">
+                <Plus size={17} />
+                <span>Criar evento</span>
+              </Link>
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="mobile-menu-button"
+              aria-label={open ? "Fechar menu" : "Abrir menu"}
+              aria-expanded={open}
+              onClick={() => setOpen(!open)}
+            >
+              {open ? <X /> : <Menu />}
+            </Button>
+          </div>
+        </div>
+      </header>
+      <main id="conteudo">{children}</main>
+      <footer className="footer">
+        <div className="wrap">
+          <div className="footer-grid">
+            <div>
+              <Logo />
+              <p>Mais que sair de casa. É descobrir o que faz a vida acontecer.</p>
+            </div>
+            <div>
+              <h4>EXPLORE</h4>
+              <ul>
+                <li>
+                  <Link to="/eventos">Eventos</Link>
+                </li>
+                <li>
+                  <Link to="/mapa">Mapa de experiências</Link>
+                </li>
+                <li>
+                  <Link to="/descoberta">
+                    Descoberta Mágica <ArrowUpRight className="inline size-3" />
+                  </Link>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h4>GOUP</h4>
+              <ul>
+                <li>
+                  <Link to="/planos">Conheça os planos</Link>
+                </li>
+                <li>
+                  <Link to="/eventos/novo">Divulgue seu evento</Link>
+                </li>
+                <li>
+                  <Link to="/perfil">Minha conta</Link>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="text-carmine">
+                <MapPin className="inline size-3 mr-1" /> BLUMENAU É NOSSO LUGAR
+              </h4>
+              <div className="footer-motto">
+                Vá. Viva.
+                <br />
+                <Brand />.
+              </div>
+            </div>
+          </div>
+          <div className="footer-bottom">
+            <span>© {new Date().getFullYear()} GoUp Events. Feito para descobrir.</span>
+            <span>Blumenau e região · Santa Catarina</span>
+          </div>
+        </div>
+        <div className="footer-stripe" />
+      </footer>
+    </>
+  );
 }

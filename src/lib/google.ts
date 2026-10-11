@@ -1,6 +1,47 @@
-import { GOOGLE_MAPS_API_KEY } from '@/config';
-export interface GoogleMarker {addListener:(name:string,callback:()=>void)=>void;setMap:(map:unknown)=>void}
-export interface GoogleMap {fitBounds:(bounds:unknown)=>void}
-export interface GoogleMaps {Map:new (element:HTMLElement,options:unknown)=>GoogleMap;Marker:new (options:unknown)=>GoogleMarker;LatLngBounds:new()=>{extend:(point:{lat:number;lng:number})=>void};places:{Autocomplete:new(element:HTMLInputElement,options:unknown)=>{addListener:(name:string,callback:()=>void)=>void;getPlace:()=>{place_id?:string;name?:string}}}}
-let pending:Promise<GoogleMaps>|undefined;
-export function loadGoogle():Promise<GoogleMaps>{if(pending)return pending;pending=new Promise((resolve,reject)=>{const existing=(window as unknown as {google?:{maps:GoogleMaps}}).google;if(existing){resolve(existing.maps);return}const script=document.createElement('script');script.src=`https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(GOOGLE_MAPS_API_KEY)}&libraries=places`;script.async=true;script.onload=()=>{const google=(window as unknown as {google?:{maps:GoogleMaps}}).google;if(google)resolve(google.maps);else reject(new Error('Não foi possível carregar o Google Maps.'))};script.onerror=()=>{pending=undefined;reject(new Error('Não foi possível carregar o Google Maps.'))};document.head.appendChild(script)});return pending}
+import { GOOGLE_MAPS_API_KEY } from "@/config";
+export interface GoogleMarker {
+  addListener: (name: string, callback: () => void) => void;
+  setMap: (map: unknown) => void;
+}
+export interface GoogleMap {
+  fitBounds: (bounds: unknown) => void;
+}
+export interface GoogleMaps {
+  Map: new (element: HTMLElement, options: unknown) => GoogleMap;
+  Marker: new (options: unknown) => GoogleMarker;
+  LatLngBounds: new () => { extend: (point: { lat: number; lng: number }) => void };
+  places: {
+    Autocomplete: new (
+      element: HTMLInputElement,
+      options: unknown,
+    ) => {
+      addListener: (name: string, callback: () => void) => void;
+      getPlace: () => { place_id?: string; name?: string };
+    };
+  };
+}
+let pending: Promise<GoogleMaps> | undefined;
+export function loadGoogle(): Promise<GoogleMaps> {
+  if (pending) return pending;
+  pending = new Promise((resolve, reject) => {
+    const existing = (window as unknown as { google?: { maps: GoogleMaps } }).google;
+    if (existing) {
+      resolve(existing.maps);
+      return;
+    }
+    const script = document.createElement("script");
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(GOOGLE_MAPS_API_KEY)}&libraries=places`;
+    script.async = true;
+    script.onload = () => {
+      const google = (window as unknown as { google?: { maps: GoogleMaps } }).google;
+      if (google) resolve(google.maps);
+      else reject(new Error("Não foi possível carregar o Google Maps."));
+    };
+    script.onerror = () => {
+      pending = undefined;
+      reject(new Error("Não foi possível carregar o Google Maps."));
+    };
+    document.head.appendChild(script);
+  });
+  return pending;
+}

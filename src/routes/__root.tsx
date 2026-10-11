@@ -82,7 +82,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "GoUp Events — Descubra Blumenau" },
-      { name: "description", content: "Eventos e experiências em Blumenau e região. Vá. Viva. GoUp." },
+      {
+        name: "description",
+        content: "Eventos e experiências em Blumenau e região. Vá. Viva. GoUp.",
+      },
       { property: "og:title", content: "GoUp Events — Descubra Blumenau" },
       { property: "og:description", content: "Encontre seu próximo momento em Blumenau e região." },
       { property: "og:type", content: "website" },
@@ -94,7 +97,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         href: appCss,
       },
       { rel: "icon", href: "/favicon.png", type: "image/png" },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&display=swap" },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&display=swap",
+      },
     ],
   }),
   shellComponent: RootShell,
@@ -123,7 +129,12 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <AuthProvider><SiteShell><Outlet /></SiteShell><Toaster position="bottom-right" /></AuthProvider>
+      <AuthProvider>
+        <SiteShell>
+          <Outlet />
+        </SiteShell>
+        <Toaster position="bottom-right" />
+      </AuthProvider>
     </QueryClientProvider>
   );
 }
