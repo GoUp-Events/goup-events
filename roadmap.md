@@ -1,9 +1,11 @@
 # GoUp
-- [ ] Design system, shared navigation and home
-- [ ] REST integration and exact API errors
-- [ ] Explore, details and nearby places
-- [ ] Account, favorites and own events
-- [ ] Create and edit event forms
-- [ ] Plans and Premium discovery
-- [ ] Interactive event map
-- [ ] Tests and live page checks
+- [x] Design system, shared navigation and home
+- [x] REST integration and exact API errors
+- [x] Explore, details and nearby places
+- [x] Account, favorites and own events
+- [x] Create and edit event forms
+- [x] Plans and Premium discovery
+- [x] Interactive event map
+- [ ] Authenticated API flow checks — blocked by external API CORS, including preview origin
+- [ ] GitHub delivery — user must link the existing repository using Lovable GitHub settings
+- [ ] Tests and public live page checks

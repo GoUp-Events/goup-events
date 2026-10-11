@@ -9,6 +9,7 @@ import { citiesFrom, dateLabel, money } from "@/lib/format";
 import type { Event } from "@/lib/models";
 import { Kicker, Loading, Empty, ErrorState, useCategories } from "./common";
 import { Button } from "@/components/ui/button";
+import workerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?url";
 export function MapPage() {
   const [city, setCity] = useState("");
   const [categoryId, setCategoryId] = useState("");
@@ -53,6 +54,7 @@ export function MapPage() {
         } else {
           const ml = await import("maplibre-gl");
           if (!active) return;
+          ml.setWorkerUrl(workerUrl);
           const map = new ml.Map({
             container: element,
             style: "https://tiles.openfreemap.org/styles/liberty",

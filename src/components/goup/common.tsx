@@ -48,7 +48,7 @@ export function categoryIcon(name?: string): LucideIcon {
 export function EventCover({ event, large = false }: { event: Event; large?: boolean }) {
   const Icon = categoryIcon(event.category?.name);
   return (
-    <div className={`event-cover ${event.id % 2 ? "alternate" : ""} ${large ? "large" : ""}`}>
+    <div className={`event-cover ${(event.category?.id ?? 0) % 2 ? "alternate" : ""} ${large ? "large" : ""}`}>
       <Icon strokeWidth={1.2} />
       <span className="category-label">{event.category?.name ?? "Evento"}</span>
     </div>

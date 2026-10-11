@@ -146,6 +146,7 @@ function Home() {
                 >
                   <Icon />
                   <strong>{c.name}</strong>
+                  <span className="category-description">{c.description}</span>
                 </Button>
               );
             })}
