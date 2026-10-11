@@ -8,4 +8,4 @@
 - [x] Interactive event map
 - [ ] Authenticated API flow checks — blocked by external API CORS, including preview origin
 - [ ] GitHub delivery — user must link the existing repository using Lovable GitHub settings
-- [ ] Tests and public live page checks
+- [x] Tests and public live page checks
