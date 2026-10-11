@@ -1,11 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { Save, MapPin, ArrowRight } from "lucide-react";
 import { api, ApiError } from "@/lib/api";
 import { ageLabels } from "@/lib/format";
-import { GOOGLE_MAPS_API_KEY } from "@/config";
-import { loadGoogle } from "@/lib/google";
+import type { PlaceSuggestion } from "@/lib/models";
 import { useAuth } from "./auth";
 import { Kicker, LoginGate, Loading, ErrorState, useCategories } from "./common";
 import { Button } from "@/components/ui/button";
@@ -51,9 +50,31 @@ export function EventFormPage({ id }: { id?: string | undefined }) {
 }
 function EventForm({ id }: { id?: string | undefined }) {
   const auth = useAuth();
-  const [values, setValues] = useState<Values>(empty);
-  const [googleError, setGoogleError] = useState("");
-  const placeInput = useRef<HTMLInputElement>(null);
+  const draftKey = `goup-event-draft-${id ?? "new"}`;
+  const [values, setValues] = useState<Values>(() => {
+    if (typeof window === "undefined") return empty;
+    try {
+      return JSON.parse(sessionStorage.getItem(draftKey) ?? "null") ?? empty;
+    } catch {
+      return empty;
+    }
+  });
+  const [selectedPlace, setSelectedPlace] = useState<PlaceSuggestion | null>(() => {
+    if (typeof window === "undefined") return null;
+    try {
+      return JSON.parse(sessionStorage.getItem(`${draftKey}-place`) ?? "null");
+    } catch {
+      return null;
+    }
+  });
+  const [placeQuery, setPlaceQuery] = useState("");
+  const [suggestions, setSuggestions] = useState<PlaceSuggestion[]>([]);
+  const [placeLoading, setPlaceLoading] = useState(false);
+  const [placeError, setPlaceError] = useState("");
+  const [placeValidation, setPlaceValidation] = useState("");
+  const [activeIndex, setActiveIndex] = useState(-1);
+  const abortRef = useRef<AbortController | null>(null);
+  const listId = useId();
   const navigate = useNavigate();
   const client = useQueryClient();
   const categories = useCategories();
@@ -64,7 +85,7 @@ function EventForm({ id }: { id?: string | undefined }) {
     retry: false,
   });
   useEffect(() => {
-    if (event.data) {
+    if (event.data && !sessionStorage.getItem(draftKey)) {
       const e = event.data;
       setValues({
         title: e.title,
@@ -78,28 +99,57 @@ function EventForm({ id }: { id?: string | undefined }) {
         status: e.status,
         placeId: e.location.placeId,
       });
+      setSelectedPlace({
+        placeId: e.location.placeId,
+        name: e.location.name,
+        address: e.location.formattedAddress ?? e.location.address ?? "",
+      });
     }
-  }, [event.data]);
+  }, [event.data, draftKey]);
   useEffect(() => {
-    if (!GOOGLE_MAPS_API_KEY || !placeInput.current) return;
-    let active = true;
-    void loadGoogle()
-      .then((maps) => {
-        if (!active || !placeInput.current) return;
-        const autocomplete = new maps.places.Autocomplete(placeInput.current, {
-          fields: ["place_id", "name"],
-          componentRestrictions: { country: "br" },
+    if (id && !event.data) return;
+    sessionStorage.setItem(draftKey, JSON.stringify(values));
+    if (selectedPlace) sessionStorage.setItem(`${draftKey}-place`, JSON.stringify(selectedPlace));
+    else sessionStorage.removeItem(`${draftKey}-place`);
+  }, [draftKey, values, selectedPlace, id, event.data]);
+  useEffect(() => {
+    abortRef.current?.abort();
+    setSuggestions([]);
+    setActiveIndex(-1);
+    setPlaceError("");
+    if (selectedPlace || placeQuery.trim().length < 3 || !auth.token) {
+      setPlaceLoading(false);
+      return;
+    }
+    const controller = new AbortController();
+    abortRef.current = controller;
+    const timer = window.setTimeout(() => {
+      setPlaceLoading(true);
+      void api
+        .placeSuggestions(placeQuery.trim(), auth.token, controller.signal)
+        .then((items) => {
+          if (!controller.signal.aborted) setSuggestions(items);
+        })
+        .catch((error) => {
+          if (!controller.signal.aborted && !(error instanceof ApiError && error.status === 401))
+            setPlaceError("Não foi possível buscar locais agora. Tente novamente.");
+        })
+        .finally(() => {
+          if (!controller.signal.aborted) setPlaceLoading(false);
         });
-        autocomplete.addListener("place_changed", () => {
-          const place = autocomplete.getPlace();
-          setValues((v) => ({ ...v, placeId: place.place_id ?? "" }));
-        });
-      })
-      .catch((error) => setGoogleError(error instanceof Error ? error.message : ""));
+    }, 300);
     return () => {
-      active = false;
+      window.clearTimeout(timer);
+      controller.abort();
     };
-  }, []);
+  }, [placeQuery, selectedPlace, auth.token]);
+  const choosePlace = (place: PlaceSuggestion) => {
+    abortRef.current?.abort();
+    setSelectedPlace(place);
+    setValues((v) => ({ ...v, placeId: place.placeId }));
+    setSuggestions([]);
+    setPlaceValidation("");
+  };
   const mutation = useMutation({
     mutationFn: () =>
       api.save(
@@ -119,6 +169,8 @@ function EventForm({ id }: { id?: string | undefined }) {
         id,
       ),
     onSuccess: (e) => {
+      sessionStorage.removeItem(draftKey);
+      sessionStorage.removeItem(`${draftKey}-place`);
       void client.invalidateQueries({ queryKey: ["mine"] });
       void client.invalidateQueries({ queryKey: ["events"] });
       void client.invalidateQueries({ queryKey: ["event"] });
@@ -146,6 +198,10 @@ function EventForm({ id }: { id?: string | undefined }) {
       className="form-card form-grid max-w-4xl"
       onSubmit={(e) => {
         e.preventDefault();
+        if (!values.placeId || !selectedPlace) {
+          setPlaceValidation("Escolha um local na lista de sugestões para continuar.");
+          return;
+        }
         mutation.mutate();
       }}
     >
@@ -217,33 +273,92 @@ function EventForm({ id }: { id?: string | undefined }) {
           <ErrorState error={categories.error} retry={() => void categories.refetch()} />
         </div>
       )}
-      <label className="field span-all">
-        <span>
+      <div className="field span-all">
+        <label htmlFor="event-place">
           <MapPin className="inline size-4 mr-1" />
-          {GOOGLE_MAPS_API_KEY ? "Local do evento" : "ID do local no Google (placeId)"}
-        </span>
-        {GOOGLE_MAPS_API_KEY ? (
-          <input
-            ref={placeInput}
-            placeholder="Busque e selecione o estabelecimento"
-            defaultValue={event.data?.location.name}
-          />
+          Local do evento
+        </label>
+        {selectedPlace ? (
+          <div className="selected-place">
+            <div>
+              <strong>{selectedPlace.name}</strong>
+              <small>{selectedPlace.address}</small>
+            </div>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => {
+                setSelectedPlace(null);
+                setPlaceQuery("");
+                change("placeId", "");
+              }}
+            >
+              Trocar local
+            </Button>
+          </div>
         ) : (
-          <input
-            value={values.placeId}
-            required
-            placeholder="Cole o placeId do local"
-            onChange={(e) => change("placeId", e.target.value)}
-          />
+          <div className="place-search">
+            <input
+              id="event-place"
+              role="combobox"
+              aria-autocomplete="list"
+              aria-expanded={suggestions.length > 0}
+              aria-controls={listId}
+              aria-activedescendant={activeIndex >= 0 ? `${listId}-${activeIndex}` : undefined}
+              aria-invalid={!!placeValidation}
+              placeholder="Digite o nome do estabelecimento"
+              value={placeQuery}
+              onChange={(e) => setPlaceQuery(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Escape") {
+                  setSuggestions([]);
+                  setActiveIndex(-1);
+                }
+                if (e.key === "ArrowDown" && suggestions.length) {
+                  e.preventDefault();
+                  setActiveIndex((i) => (i + 1) % suggestions.length);
+                }
+                if (e.key === "ArrowUp" && suggestions.length) {
+                  e.preventDefault();
+                  setActiveIndex((i) => (i <= 0 ? suggestions.length - 1 : i - 1));
+                }
+                if (e.key === "Enter" && activeIndex >= 0 && suggestions[activeIndex]) {
+                  e.preventDefault();
+                  choosePlace(suggestions[activeIndex]);
+                }
+              }}
+            />
+            {suggestions.length > 0 && (
+              <div id={listId} role="listbox" className="place-suggestions">
+                {suggestions.map((place, index) => (
+                  <button
+                    id={`${listId}-${index}`}
+                    key={place.placeId}
+                    type="button"
+                    role="option"
+                    aria-selected={activeIndex === index}
+                    onMouseDown={(e) => e.preventDefault()}
+                    onClick={() => choosePlace(place)}
+                  >
+                    <strong>{place.name}</strong>
+                    <small>{place.address}</small>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         )}
-        <span className="form-help">
-          {GOOGLE_MAPS_API_KEY
-            ? googleError || "Selecione o local nos resultados do Google."
-            : "A busca de locais está indisponível sem a chave do Google Maps. Informe o placeId do estabelecimento."}
-        </span>
+        {!selectedPlace && placeLoading && <span className="form-help">Buscando locais…</span>}
+        {!selectedPlace &&
+          !placeLoading &&
+          placeQuery.trim().length >= 3 &&
+          !suggestions.length &&
+          !placeError && <span className="form-help">Nenhum local encontrado.</span>}
+        {placeError && <span className="field-error">{placeError}</span>}
+        {placeValidation && <span className="field-error">{placeValidation}</span>}
         {errorField("placeId")}
         {errorField("location")}
-      </label>
+      </div>
       <label className="field">
         Status
         <select value={values.status} onChange={(e) => change("status", e.target.value)}>

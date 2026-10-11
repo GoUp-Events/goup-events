@@ -8,6 +8,12 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
+.backend-inspect/
+.tools/
+node-v22.zip
+.env
+.env.*
+!.env.example
 dist
 dist-ssr
 .output

@@ -9,6 +9,7 @@ import type {
   FieldError,
   Nearby,
   Plan,
+  PlaceSuggestion,
   Recommendation,
   User,
 } from "./models";
@@ -36,6 +37,7 @@ export async function request<T>(
     method?: "GET" | "POST" | "PUT" | "DELETE";
     body?: unknown;
     token?: string | undefined;
+    signal?: AbortSignal | undefined;
   } = {},
 ): Promise<T> {
   const headers: Record<string, string> = { "Content-Type": "application/json" };
@@ -45,9 +47,11 @@ export async function request<T>(
     response = await fetch(`${API_BASE_URL}${path}`, {
       method: options.method ?? "GET",
       headers,
+      ...(options.signal ? { signal: options.signal } : {}),
       ...(options.body === undefined ? {} : { body: JSON.stringify(options.body) }),
     });
-  } catch {
+  } catch (error) {
+    if (error instanceof Error && error.name === "AbortError") throw error;
     const message = "Não consegui falar com o servidor do GoUp.";
     toast.error(message);
     throw new ApiError(message, 0);
@@ -60,7 +64,7 @@ export async function request<T>(
     data = undefined;
   }
   if (!response.ok) {
-    if (response.status === 401 && options.token && !text) {
+    if (response.status === 401 && options.token) {
       if (typeof window !== "undefined") {
         localStorage.removeItem("goup-token");
         window.dispatchEvent(new globalThis.Event("goup-session-expired"));
@@ -75,13 +79,16 @@ export async function request<T>(
   return data as T;
 }
 export type Filters = {
-  q?: string;
-  city?: string;
-  categoryId?: string;
-  dateFrom?: string;
-  dateTo?: string;
-  maxPrice?: string;
-  sort?: string;
+  q?: string | undefined;
+  city?: string | undefined;
+  categoryId?: string | undefined;
+  dateFrom?: string | undefined;
+  dateTo?: string | undefined;
+  maxPrice?: string | undefined;
+  categoryIds?: string | undefined;
+  freeOnly?: string | undefined;
+  ageRating?: string | undefined;
+  sort?: string | undefined;
 };
 export function queryString(filters: Filters | Record<string, string | undefined>) {
   const params = new URLSearchParams();
@@ -92,6 +99,8 @@ export function queryString(filters: Filters | Record<string, string | undefined
 }
 export const api = {
   categories: () => request<Category[]>("/categories"),
+  placeSuggestions: (q: string, token: string, signal?: AbortSignal) =>
+    request<PlaceSuggestion[]>(`/locations/autocomplete${queryString({ q })}`, { token, signal }),
   plans: () => request<Plan[]>("/plans"),
   events: (filters: Filters = {}, token?: string) =>
     request<Event[]>(`/events${queryString(filters)}`, { token }),

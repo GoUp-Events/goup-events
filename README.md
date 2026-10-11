@@ -1,26 +1,26 @@
-# Goup Events
+# GoUp Events
 
-Construa a página do zero a partir do prompt, no repositório que eu te dei permissão https://github.com/GoUp-Events/GoUp-Frontend-lovable
+Frontend React, TypeScript e Vite da plataforma de descoberta de eventos GoUp.
 
-This project was built with [Lovable](https://lovable.dev).
+## Desenvolvimento
 
-**Live app**: https://goup-events.lovable.app
+Instale as dependências do `bun.lock` e execute `npm run dev -- --host localhost --port 5173` (ou `bun run dev -- --host localhost --port 5173`). Essa origem já é aceita pelo CORS padrão do backend; a porta 8080 usada pelo Vite neste projeto não é aceita no Railway sem ajustar `GOUP_CORS_ORIGINS`. O servidor local usa a API publicada por padrão. Para apontar a outra instância, copie `.env.example` para `.env.local` e defina `VITE_API_BASE_URL` com a URL pública do backend, sem barra final.
 
-## Build with Lovable
+O frontend usa diretamente os endpoints REST do backend. `GET /events` aceita `q`, `city`, `categoryId`, `categoryIds`, `dateFrom`, `dateTo`, `maxPrice`, `freeOnly`, `ageRating` e `sort`; os filtros da página de eventos ficam na URL. O formulário usa `GET /locations/autocomplete?q=...` com JWT e envia somente o `placeId` escolhido no POST/PUT de eventos. As categorias vêm de `GET /categories`.
 
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/04fa1e9b-d3bb-40f3-9fd8-4ee9d159dea2).
+## Variáveis de ambiente
 
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
+| Ambiente                    | Variável                                                                | Finalidade                                                                                     |
+| --------------------------- | ----------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| Frontend (local ou Lovable) | `VITE_API_BASE_URL`                                                     | URL pública da API. Opcional; padrão: `https://goup-events-backend-production.up.railway.app`. |
+| Backend (Railway)           | `GOOGLE_PLACES_API_KEY`                                                 | Chave da Places API (New), usada pelo autocomplete e pela resolução dos locais.                |
+| Backend (Railway)           | `GOUP_CORS_ORIGINS`                                                     | Origens permitidas para o frontend. Inclua a origem local se usar outra porta.                 |
+| Backend (Railway)           | `GOUP_JWT_SECRET`                                                       | Segredo do JWT.                                                                                |
+| Backend (Railway)           | `MYSQLHOST`, `MYSQLPORT`, `MYSQLDATABASE`, `MYSQLUSER`, `MYSQLPASSWORD` | Banco MySQL.                                                                                   |
+| Backend (Railway)           | `GEMINI_API_KEY`                                                        | Descoberta Mágica, quando usada.                                                               |
 
-## Development
+A chave do Google fica somente no backend. Não configure variáveis `VITE_` com segredos.
 
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+## Verificação
 
-```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
-npm run dev
-```
+Execute `npm run lint` e `npm run build`. Para testar o fluxo, entre na conta, abra **Criar evento**, digite pelo menos três caracteres do nome do local, escolha uma sugestão, preencha os demais campos e salve. Em **Explorar eventos**, combine cidade, categoria, datas e demais filtros; copie a URL e confira que ela reabre a mesma pesquisa.

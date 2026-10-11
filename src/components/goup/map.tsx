@@ -1,10 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { MapPin, ArrowRight, X } from "lucide-react";
 import { api } from "@/lib/api";
-import { GOOGLE_MAPS_API_KEY } from "@/config";
-import { loadGoogle } from "@/lib/google";
 import { citiesFrom, dateLabel, money } from "@/lib/format";
 import type { Event } from "@/lib/models";
 import { Kicker, Loading, Empty, ErrorState, useCategories } from "./common";
@@ -19,11 +17,15 @@ export function MapPage() {
   const categories = useCategories();
   const events = useQuery({ queryKey: ["all-events"], queryFn: () => api.events(), retry: false });
   const ref = useRef<HTMLDivElement>(null);
-  const filtered = (events.data ?? []).filter(
-    (e) =>
-      (!city || e.location.city === city) && (!categoryId || String(e.category?.id) === categoryId),
+  const filtered = useMemo(
+    () =>
+      (events.data ?? []).filter(
+        (e) =>
+          (!city || e.location.city === city) &&
+          (!categoryId || String(e.category?.id) === categoryId),
+      ),
+    [events.data, city, categoryId],
   );
-  const key = filtered.map((e) => e.id).join(",");
   useEffect(() => {
     if (!ref.current) return;
     let active = true;
@@ -32,65 +34,44 @@ export function MapPage() {
     setMapError(null);
     async function init() {
       try {
-        if (GOOGLE_MAPS_API_KEY) {
-          const maps = await loadGoogle();
-          if (!active) return;
-          const map = new maps.Map(element, { center: { lat: -26.9194, lng: -49.0661 }, zoom: 12 });
-          const bounds = new maps.LatLngBounds();
-          const markers = filtered
-            .filter((e) => e.location.latitude != null && e.location.longitude != null)
-            .map((e) => {
-              const position = {
-                lat: Number(e.location.latitude),
-                lng: Number(e.location.longitude),
-              };
-              bounds.extend(position);
-              const marker = new maps.Marker({ map, position, title: e.title });
-              marker.addListener("click", () => setSelected(e));
-              return marker;
-            });
-          if (markers.length) map.fitBounds(bounds);
-          cleanup = () => markers.forEach((m) => m.setMap(null));
-        } else {
-          const ml = await import("maplibre-gl");
-          if (!active) return;
-          ml.setWorkerUrl(workerUrl);
-          const map = new ml.Map({
-            container: element,
-            style: "https://tiles.openfreemap.org/styles/liberty",
-            center: [-49.0661, -26.9194],
-            zoom: 12,
-          });
-          map.addControl(new ml.NavigationControl(), "top-right");
-          map.on("error", () => {
-            if (active)
-              setMapError(
-                new Error("Não foi possível carregar o mapa. Tente novamente em instantes."),
-              );
-          });
-          const bounds = new ml.LngLatBounds();
-          const color = getComputedStyle(document.documentElement)
-            .getPropertyValue("--primary")
-            .trim();
-          let count = 0;
-          filtered.forEach((e) => {
-            const lng = Number(e.location.longitude),
-              lat = Number(e.location.latitude);
-            if (!Number.isFinite(lng) || !Number.isFinite(lat)) return;
-            const marker = new ml.Marker({ color }).setLngLat([lng, lat]).addTo(map);
-            marker.getElement().setAttribute("aria-label", e.title);
-            marker.getElement().setAttribute("role", "button");
-            marker.getElement().tabIndex = 0;
-            marker.getElement().onclick = () => setSelected(e);
-            marker.getElement().onkeydown = (ev) => {
-              if (ev.key === "Enter") setSelected(e);
-            };
-            bounds.extend([lng, lat]);
-            count++;
-          });
-          if (count) map.fitBounds(bounds, { padding: 70, maxZoom: 14 });
-          cleanup = () => map.remove();
-        }
+        const ml = await import("maplibre-gl");
+        if (!active) return;
+        ml.setWorkerUrl(workerUrl);
+        const map = new ml.Map({
+          container: element,
+          style: "https://tiles.openfreemap.org/styles/liberty",
+          center: [-49.0661, -26.9194],
+          zoom: 12,
+        });
+        map.addControl(new ml.NavigationControl(), "top-right");
+        map.on("error", () => {
+          if (active)
+            setMapError(
+              new Error("Não foi possível carregar o mapa. Tente novamente em instantes."),
+            );
+        });
+        const bounds = new ml.LngLatBounds();
+        const color = getComputedStyle(document.documentElement)
+          .getPropertyValue("--primary")
+          .trim();
+        let count = 0;
+        filtered.forEach((e) => {
+          const lng = Number(e.location.longitude),
+            lat = Number(e.location.latitude);
+          if (!Number.isFinite(lng) || !Number.isFinite(lat)) return;
+          const marker = new ml.Marker({ color }).setLngLat([lng, lat]).addTo(map);
+          marker.getElement().setAttribute("aria-label", e.title);
+          marker.getElement().setAttribute("role", "button");
+          marker.getElement().tabIndex = 0;
+          marker.getElement().onclick = () => setSelected(e);
+          marker.getElement().onkeydown = (ev) => {
+            if (ev.key === "Enter") setSelected(e);
+          };
+          bounds.extend([lng, lat]);
+          count++;
+        });
+        if (count) map.fitBounds(bounds, { padding: 70, maxZoom: 14 });
+        cleanup = () => map.remove();
       } catch (error) {
         if (active)
           setMapError(
@@ -103,7 +84,7 @@ export function MapPage() {
       active = false;
       cleanup();
     };
-  }, [key, retry]);
+  }, [filtered, retry]);
   return (
     <div className="page wrap">
       <Kicker>DESCUBRA AO SEU REDOR</Kicker>

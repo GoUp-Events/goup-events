@@ -60,8 +60,8 @@ function Home() {
             >
               <Search size={20} />
               <input
-                aria-label="Buscar evento, lugar ou cidade"
-                placeholder="Evento, lugar ou cidade..."
+                aria-label="Buscar evento por título ou descrição"
+                placeholder="Título ou descrição do evento"
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
               />

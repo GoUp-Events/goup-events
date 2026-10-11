@@ -1,13 +1,26 @@
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
-import { Search, RotateCcw } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useNavigate, useSearch } from "@tanstack/react-router";
+import { RotateCcw } from "lucide-react";
 import { api, type Filters } from "@/lib/api";
-import { citiesFrom } from "@/lib/format";
+import { citiesFrom, ageLabels } from "@/lib/format";
 import { useAuth } from "./auth";
 import { useCategories, Loading, Empty, ErrorState, EventGrid, Kicker } from "./common";
 import { Button } from "@/components/ui/button";
-export function ExplorePage({ initialQ = "" }: { initialQ?: string }) {
-  const [filters, setFilters] = useState<Filters>({ q: initialQ, sort: "date" });
+export function ExplorePage() {
+  const filters = useSearch({ from: "/eventos/" });
+  const navigate = useNavigate();
+  const [text, setText] = useState(filters.q ?? "");
+  useEffect(() => {
+    setText(filters.q ?? "");
+  }, [filters.q]);
+  useEffect(() => {
+    if (text === (filters.q ?? "")) return;
+    const timer = window.setTimeout(() => {
+      void navigate({ to: "/eventos", search: (prev) => ({ ...prev, q: text || undefined }) });
+    }, 300);
+    return () => window.clearTimeout(timer);
+  }, [text, filters.q, navigate]);
   const auth = useAuth();
   const categories = useCategories();
   const all = useQuery({ queryKey: ["all-events"], queryFn: () => api.events(), retry: false });
@@ -16,7 +29,9 @@ export function ExplorePage({ initialQ = "" }: { initialQ?: string }) {
     queryFn: () => api.events(filters, auth.token),
     retry: false,
   });
-  const change = (key: keyof Filters, value: string) => setFilters((f) => ({ ...f, [key]: value }));
+  const change = (key: keyof Filters, value: string) => {
+    void navigate({ to: "/eventos", search: (prev) => ({ ...prev, [key]: value || undefined }) });
+  };
   const cities = citiesFrom(all.data ?? []);
   return (
     <div className="page wrap">
@@ -31,11 +46,36 @@ export function ExplorePage({ initialQ = "" }: { initialQ?: string }) {
         <label className="field">
           O que você procura?
           <input
-            placeholder="Evento, lugar ou cidade..."
-            value={filters.q ?? ""}
-            onChange={(e) => change("q", e.target.value)}
+            placeholder="Título ou descrição do evento"
+            value={text}
+            onChange={(e) => setText(e.target.value)}
           />
         </label>
+        <div className="field">
+          Mais categorias
+          <div className="category-options">
+            {categories.data?.map((c) => {
+              const ids = (filters.categoryIds ?? "").split(",").filter(Boolean);
+              return (
+                <label key={c.id}>
+                  <input
+                    type="checkbox"
+                    checked={ids.includes(String(c.id))}
+                    onChange={(e) =>
+                      change(
+                        "categoryIds",
+                        e.target.checked
+                          ? [...ids, String(c.id)].join(",")
+                          : ids.filter((v) => v !== String(c.id)).join(","),
+                      )
+                    }
+                  />{" "}
+                  {c.name}
+                </label>
+              );
+            })}
+          </div>
+        </div>
         <label className="field">
           Categoria
           <select
@@ -85,15 +125,43 @@ export function ExplorePage({ initialQ = "" }: { initialQ?: string }) {
             onChange={(e) => change("maxPrice", e.target.value)}
           />
         </label>
+        <label className="field filter-check">
+          <input
+            type="checkbox"
+            checked={filters.freeOnly === "true"}
+            onChange={(e) => change("freeOnly", e.target.checked ? "true" : "")}
+          />{" "}
+          Apenas gratuitos
+        </label>
+        <label className="field">
+          Classificação etária
+          <select
+            value={filters.ageRating ?? ""}
+            onChange={(e) => change("ageRating", e.target.value)}
+          >
+            <option value="">Todas</option>
+            {Object.entries(ageLabels).map(([value, label]) => (
+              <option key={value} value={value}>
+                {label}
+              </option>
+            ))}
+          </select>
+        </label>
         <label className="field">
           Ordenar por
           <select value={filters.sort ?? "date"} onChange={(e) => change("sort", e.target.value)}>
             <option value="date">Data do evento</option>
-            <option value="popular">Mais populares · Premium</option>
+            {auth.user?.premium && <option value="popular">Mais populares · Premium</option>}
           </select>
         </label>
         <div className="flex items-end">
-          <Button variant="outline" onClick={() => setFilters({ q: "", sort: "date" })}>
+          <Button
+            variant="outline"
+            onClick={() => {
+              setText("");
+              void navigate({ to: "/eventos", search: {} });
+            }}
+          >
             <RotateCcw />
             Limpar filtros
           </Button>
@@ -118,7 +186,7 @@ export function ExplorePage({ initialQ = "" }: { initialQ?: string }) {
       ) : (
         <Empty
           title="Nenhum evento encontrado"
-          description="Que tal tentar outra categoria, cidade ou data? Novas possibilidades estão a caminho."
+          description="Tente limpar os filtros para ver outros eventos."
         />
       )}
     </div>

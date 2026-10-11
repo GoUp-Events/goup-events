@@ -68,6 +68,11 @@ export interface Nearby {
   priceLevel?: string;
   googleMapsUri?: string;
 }
+export interface PlaceSuggestion {
+  placeId: string;
+  name: string;
+  address: string;
+}
 export interface AuthResponse {
   accessToken: string;
   expiresIn: number;

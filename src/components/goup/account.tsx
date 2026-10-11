@@ -32,7 +32,12 @@ export function AuthPage({ register = false }: { register?: boolean }) {
         : api.login({ email: values.email, password: values.password }),
     onSuccess: (data) => {
       auth.signIn(data);
-      void navigate({ to: "/perfil" });
+      const returnTo = sessionStorage.getItem("goup-return-after-login");
+      sessionStorage.removeItem("goup-return-after-login");
+      const editId = returnTo?.match(/^\/eventos\/([^/]+)\/editar$/)?.[1];
+      if (editId) void navigate({ to: "/eventos/$id/editar", params: { id: editId } });
+      else if (returnTo === "/eventos/novo") void navigate({ to: "/eventos/novo" });
+      else void navigate({ to: "/perfil" });
     },
   });
   const errors = mutation.error instanceof ApiError ? mutation.error.errors : [];

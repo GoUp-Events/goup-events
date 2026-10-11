@@ -719,6 +719,66 @@ a {
   font-weight: 400;
   min-height: 48px;
 }
+.place-search {
+  position: relative;
+}
+.place-suggestions {
+  position: absolute;
+  z-index: 20;
+  top: 100%;
+  width: 100%;
+  max-height: 250px;
+  overflow: auto;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgb(0 0 0 / 12%);
+}
+.place-suggestions button {
+  display: block;
+  width: 100%;
+  padding: 10px 14px;
+  text-align: left;
+  color: var(--foreground);
+}
+.place-suggestions button:hover,
+.place-suggestions button[aria-selected="true"] {
+  background: var(--muted);
+}
+.place-suggestions small,
+.selected-place small {
+  display: block;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--muted-foreground);
+}
+.selected-place {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+.category-options {
+  max-height: 110px;
+  overflow: auto;
+  padding: 7px 10px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+.category-options label,
+.filter-check {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.category-options input,
+.filter-check input {
+  width: auto;
+  min-height: auto;
+}
 .field textarea {
   min-height: 125px;
   resize: vertical;

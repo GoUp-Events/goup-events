@@ -56,6 +56,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
   useEffect(() => {
     const expired = () => {
+      if (
+        window.location.pathname.startsWith("/eventos/") &&
+        window.location.pathname !== "/eventos/"
+      )
+        sessionStorage.setItem("goup-return-after-login", window.location.pathname);
       localStorage.removeItem("goup-token");
       setToken("");
       setUser(null);
