@@ -134,10 +134,22 @@ a {
   overflow: hidden;
   flex-shrink: 0;
 }
+.dark .logo-frame {
+  background: var(--card);
+}
 .logo-frame img {
   width: 100%;
   height: 100%;
   object-fit: contain;
+}
+.theme-image-dark {
+  display: none;
+}
+.dark .theme-image-light {
+  display: none;
+}
+.dark .theme-image-dark {
+  display: block;
 }
 .nav {
   display: flex;
@@ -663,6 +675,18 @@ a {
 }
 .brand-up {
   color: var(--secondary);
+}
+.brand-logo {
+  display: inline-block;
+  width: 90px;
+  height: 40px;
+  overflow: hidden;
+  vertical-align: middle;
+}
+.brand-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 .footer-bottom {
   margin-top: 40px;

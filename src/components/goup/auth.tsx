@@ -4,6 +4,8 @@ import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { api, ApiError } from "@/lib/api";
 import type { AuthResponse, User } from "@/lib/models";
+import logoLight from "@/assets/goup-preto.png";
+import logoDark from "@/assets/goup-branco.png";
 interface AuthState {
   token: string;
   user: User | null;
@@ -31,6 +33,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
   useEffect(() => {
     document.documentElement.classList.toggle("dark", dark);
+    const favicon = document.querySelector<HTMLLinkElement>('link[rel="icon"]');
+    if (favicon) favicon.href = dark ? logoDark : logoLight;
   }, [dark]);
   const me = useQuery({
     queryKey: ["me", token],

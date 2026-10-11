@@ -15,6 +15,7 @@ import {
   useCategories,
 } from "@/components/goup/common";
 import festival from "@/assets/goup-festival.jpg";
+import festivalNight from "@/assets/festival-noite.png";
 export const Route = createFileRoute("/")({
   head: () =>
     metadata(
@@ -85,8 +86,16 @@ function Home() {
           <div className="hero-art">
             <div className="hero-photo">
               <img
+                className="theme-image-light"
                 src={festival}
                 alt="Amigos aproveitando música ao ar livre — imagem ilustrativa"
+                width="1200"
+                height="960"
+              />
+              <img
+                className="theme-image-dark"
+                src={festivalNight}
+                alt="Pessoas aproveitando um evento com música à noite — imagem ilustrativa"
                 width="1200"
                 height="960"
               />

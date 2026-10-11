@@ -3,19 +3,27 @@ import { useState, type ReactNode } from "react";
 import { Menu, X, Moon, Sun, Plus, ArrowUpRight, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "./auth";
-import logo from "@/assets/goup-logo.asset.json";
-export function Brand() {
+import logoLight from "@/assets/goup-preto.png";
+import logoDark from "@/assets/goup-branco.png";
+function ThemedLogo() {
   return (
     <>
-      <span className="brand-go">Go</span>
-      <span className="brand-up">Up</span>
+      <img className="theme-image-light" src={logoLight} alt="GoUp Events" />
+      <img className="theme-image-dark" src={logoDark} alt="GoUp Events" />
     </>
+  );
+}
+export function Brand() {
+  return (
+    <span className="brand-logo">
+      <ThemedLogo />
+    </span>
   );
 }
 export function Logo() {
   return (
     <Link to="/" className="logo-frame" aria-label="GoUp Events — início">
-      <img src={logo.url} alt="GoUp Events" width="90" height="70" />
+      <ThemedLogo />
     </Link>
   );
 }
