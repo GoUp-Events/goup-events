@@ -781,6 +781,12 @@ a {
   font-weight: 400;
   min-height: 48px;
 }
+.field input[type="date"] {
+  color-scheme: light;
+}
+.dark .field input[type="date"] {
+  color-scheme: dark;
+}
 .place-search {
   position: relative;
 }
