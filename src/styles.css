@@ -494,6 +494,9 @@ a {
 .event-card.ended {
   opacity: 0.68;
 }
+.event-card.ended .event-cover {
+  filter: grayscale(1);
+}
 .event-card:hover {
   transform: translateY(-3px);
 }

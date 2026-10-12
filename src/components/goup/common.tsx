@@ -58,11 +58,15 @@ export function EventCover({ event, large = false }: { event: Event; large?: boo
 }
 export function EventCard({ event }: { event: Event }) {
   const auth = useAuth();
+  const cancelled = event.status === "CANCELLED";
+  const ended = event.ended || event.status === "FINISHED";
   return (
-    <article className={`event-card${event.ended ? " ended" : ""}`}>
+    <article className={`event-card${cancelled || ended ? " ended" : ""}`}>
       <div className="relative">
         <EventCover event={event} />
-        {event.ended && <span className="event-ended-badge">Encerrado</span>}
+        {(cancelled || ended) && (
+          <span className="event-ended-badge">{cancelled ? "Cancelado" : "Encerrado"}</span>
+        )}
         <Button
           size="icon"
           variant="ghost"

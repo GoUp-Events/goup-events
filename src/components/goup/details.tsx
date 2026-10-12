@@ -58,6 +58,8 @@ export function DetailsPage({ id }: { id: string }) {
       </div>
     );
   const e = event.data;
+  const cancelled = e.status === "CANCELLED";
+  const ended = e.ended || e.status === "FINISHED";
   const maps = `https://www.google.com/maps/search/?api=1&query=${e.location.latitude},${e.location.longitude}&query_place_id=${encodeURIComponent(e.location.placeId)}`;
   const manageable = canManage(e, auth.user);
   return (
@@ -70,9 +72,9 @@ export function DetailsPage({ id }: { id: string }) {
         <Kicker>{e.category?.name ?? "VIVA UM NOVO MOMENTO"}</Kicker>
         <h1>{e.title}</h1>
       </div>
-      {e.ended && (
+      {(cancelled || ended) && (
         <Alert className="mt-5 border-primary/40 bg-primary/5">
-          <AlertTitle>Esse evento já acabou!</AlertTitle>
+          <AlertTitle>{cancelled ? "Esse evento foi cancelado." : "Esse evento já acabou!"}</AlertTitle>
           <AlertDescription>
             <Link to="/eventos" className="font-semibold text-primary underline underline-offset-2">
               Veja outros eventos
