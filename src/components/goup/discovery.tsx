@@ -5,7 +5,7 @@ import { api, ApiError } from "@/lib/api";
 import { citiesFrom } from "@/lib/format";
 import type { Event } from "@/lib/models";
 import { useAuth } from "./auth";
-import { Kicker, LoginGate, Loading, ErrorState, Empty, EventGrid, PremiumGate } from "./common";
+import { Kicker, LoginGate, Loading, ErrorState, Empty, EventCard, EventGrid, PremiumGate } from "./common";
 import { Button } from "@/components/ui/button";
 const suggestions = [
   "Tenho R$30 e quero fazer alguma coisa com meus amigos hoje à noite.",
@@ -143,14 +143,14 @@ function Discovery() {
         ) : !recommendations.data?.length ? (
           <Empty title="Suas recomendações estão a caminho" />
         ) : (
-          <div className="space-y-6">
+          <div className="recommendation-grid">
             {recommendations.data.map((r) => (
-              <div key={r.event.id}>
-                <p className="section-desc mb-3">
+              <div key={r.event.id} className="recommendation-item">
+                <p className="section-desc recommendation-reason">
                   <Sparkles className="inline size-4 text-primary mr-2" />
                   {r.reason}
                 </p>
-                <EventGrid events={[r.event]} />
+                <EventCard event={r.event} />
               </div>
             ))}
           </div>

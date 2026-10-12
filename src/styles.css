@@ -472,6 +472,17 @@ a {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 24px;
 }
+.recommendation-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 36px 24px;
+}
+.recommendation-item {
+  min-width: 0;
+}
+.recommendation-reason {
+  margin-bottom: 12px;
+}
 .event-card {
   border: 1px solid var(--border);
   border-radius: 24px;
@@ -1428,6 +1439,10 @@ a {
   .event-grid {
     grid-template-columns: repeat(2, 1fr);
   }
+  .recommendation-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 28px 14px;
+  }
   .steps {
     grid-template-columns: 1fr;
   }
@@ -1531,6 +1546,10 @@ a {
   }
   .event-grid {
     grid-template-columns: 1fr;
+  }
+  .recommendation-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px 12px;
   }
   .category-grid {
     grid-template-columns: repeat(2, 1fr);
