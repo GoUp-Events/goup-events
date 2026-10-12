@@ -1,6 +1,6 @@
 # GoUp
-- [ ] Presentation polish: logo alignment, slogan, equal step icons and removal of unsupported trends
-- [ ] Consolidate simultaneous session-expiry notices without changing account flows; verify regression
+- [x] Presentation polish: logo alignment, slogan, equal step icons and removal of unsupported trends
+- [x] Consolidate simultaneous session-expiry notices without changing account flows; verified live expired-token redirect and single notice, plus regression test for all three requests
 - [x] Design system, shared navigation and home
 - [x] REST integration and exact API errors
 - [x] Explore, details and nearby places

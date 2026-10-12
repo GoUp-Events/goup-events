@@ -207,7 +207,7 @@ function Home() {
             <p>Guarde seus favoritos e escolha os momentos que combinam com você.</p>
           </article>
           <article className="step">
-            <span className="step-number">03 <Asterisk aria-hidden /></span>
+            <span className="step-number">03 <Asterisk aria-hidden viewBox="5 5 14 14" /></span>
             <h3>VIVA</h3>
             <p>Chame a companhia, saia de casa e deixe a vida surpreender.</p>
           </article>
