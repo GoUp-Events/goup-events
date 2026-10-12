@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { Search, MapPin, ArrowUpRight, ArrowRight, Sparkles, Quote, Compass } from "lucide-react";
+import { Search, MapPin, ArrowUpRight, ArrowRight, Sparkles, Quote, Compass, Heart, Asterisk } from "lucide-react";
 import { api } from "@/lib/api";
 import { metadata } from "@/lib/format";
 import { Button } from "@/components/ui/button";
@@ -42,7 +42,7 @@ function Home() {
         </div>
         <div className="wrap hero-grid">
           <div>
-            <span className="kicker hero-kicker">Seu próximo momento começa aqui</span>
+            <span className="kicker hero-kicker">Seu próximo evento pode estar no GoUp</span>
             <h1>
               Descubra o que
               <br />
@@ -70,18 +70,6 @@ function Home() {
                 Buscar <ArrowUpRight size={16} />
               </Button>
             </form>
-            <div className="trending">
-              <span>Em alta:</span>
-              <Link to="/eventos" search={{ q: "Música ao vivo" }}>
-                Música ao vivo
-              </Link>
-              <Link to="/eventos" search={{ q: "Gastronomia" }}>
-                Gastronomia
-              </Link>
-              <Link to="/eventos" search={{ q: "Cerveja" }}>
-                Cerveja
-              </Link>
-            </div>
           </div>
           <div className="hero-art">
             <div className="hero-photo">
@@ -208,18 +196,18 @@ function Home() {
         <div className="steps">
           <article className="step">
             <span className="step-number">
-              01 <Compass className="inline size-6 ml-3" />
+              01 <Compass aria-hidden />
             </span>
             <h3>DESCUBRA</h3>
             <p>Explore o que está acontecendo perto de você e encontre sua vibe.</p>
           </article>
           <article className="step">
-            <span className="step-number">02 ♡</span>
+            <span className="step-number">02 <Heart aria-hidden /></span>
             <h3>ESCOLHA</h3>
             <p>Guarde seus favoritos e escolha os momentos que combinam com você.</p>
           </article>
           <article className="step">
-            <span className="step-number">03 ✳</span>
+            <span className="step-number">03 <Asterisk aria-hidden viewBox="5 5 14 14" /></span>
             <h3>VIVA</h3>
             <p>Chame a companhia, saia de casa e deixe a vida surpreender.</p>
           </article>
