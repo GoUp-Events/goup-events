@@ -48,7 +48,9 @@ export function categoryIcon(name?: string): LucideIcon {
 export function EventCover({ event, large = false }: { event: Event; large?: boolean }) {
   const Icon = categoryIcon(event.category?.name);
   return (
-    <div className={`event-cover ${(event.category?.id ?? 0) % 2 ? "alternate" : ""} ${large ? "large" : ""}`}>
+    <div
+      className={`event-cover ${(event.category?.id ?? 0) % 2 ? "alternate" : ""} ${large ? "large" : ""}`}
+    >
       <Icon strokeWidth={1.2} />
       <span className="category-label">{event.category?.name ?? "Evento"}</span>
     </div>
@@ -57,9 +59,10 @@ export function EventCover({ event, large = false }: { event: Event; large?: boo
 export function EventCard({ event }: { event: Event }) {
   const auth = useAuth();
   return (
-    <article className="event-card">
+    <article className={`event-card${event.ended ? " ended" : ""}`}>
       <div className="relative">
         <EventCover event={event} />
+        {event.ended && <span className="event-ended-badge">Encerrado</span>}
         <Button
           size="icon"
           variant="ghost"

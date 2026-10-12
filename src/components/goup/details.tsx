@@ -20,6 +20,7 @@ import { useAuth } from "./auth";
 import { EventCover, Kicker, Loading, Empty, ErrorState } from "./common";
 import { DeleteEvent } from "./account";
 import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 export function DetailsPage({ id }: { id: string }) {
   const auth = useAuth();
   const navigate = useNavigate();
@@ -69,6 +70,16 @@ export function DetailsPage({ id }: { id: string }) {
         <Kicker>{e.category?.name ?? "VIVA UM NOVO MOMENTO"}</Kicker>
         <h1>{e.title}</h1>
       </div>
+      {e.ended && (
+        <Alert className="mt-5 border-primary/40 bg-primary/5">
+          <AlertTitle>Esse evento já acabou!</AlertTitle>
+          <AlertDescription>
+            <Link to="/eventos" className="font-semibold text-primary underline underline-offset-2">
+              Veja outros eventos
+            </Link>
+          </AlertDescription>
+        </Alert>
+      )}
       <div className="detail-grid">
         <div>
           <EventCover event={e} large />

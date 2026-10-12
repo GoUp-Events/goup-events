@@ -491,8 +491,26 @@ a {
   box-shadow: var(--shadow);
   transition: transform 0.2s;
 }
+.event-card.ended {
+  opacity: 0.68;
+}
 .event-card:hover {
   transform: translateY(-3px);
+}
+.event-card.ended:hover {
+  opacity: 0.82;
+}
+.event-ended-badge {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 1;
+  border-radius: 20px;
+  padding: 6px 10px;
+  background: var(--card);
+  color: var(--carmine);
+  font-size: 11px;
+  font-weight: 700;
 }
 .event-cover {
   height: 190px;

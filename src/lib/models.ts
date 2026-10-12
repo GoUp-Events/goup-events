@@ -36,6 +36,7 @@ export interface Event {
   endTime?: string;
   price: number;
   status: string;
+  ended: boolean;
   ageRating: string;
   user: Pick<User, "id" | "name">;
   location: Location;
