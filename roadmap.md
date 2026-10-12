@@ -9,3 +9,4 @@
 - [ ] Authenticated API flow checks — blocked by external API CORS, including preview origin
 - [ ] GitHub delivery — user must link the existing repository using Lovable GitHub settings
 - [x] Tests and public live page checks
+- [x] Explain the /descoberta request and 502 handling from frontend code only
