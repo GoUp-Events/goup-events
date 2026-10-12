@@ -78,7 +78,7 @@ export function AuthPage({ register = false }: { register?: boolean }) {
             </li>
           </ol>
           <div className="footer-motto mt-10">
-            Vá. Viva. <Brand />.
+            <Brand />
           </div>
         </div>
         <div className="form-card">

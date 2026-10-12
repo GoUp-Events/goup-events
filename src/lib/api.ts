@@ -69,7 +69,7 @@ export async function request<T>(
         localStorage.removeItem("goup-token");
         window.dispatchEvent(new globalThis.Event("goup-session-expired"));
       }
-      toast.error("Sua sessão expirou");
+      toast.error("Sua sessão expirou", { id: "goup-session-expired" });
       throw new ApiError("Sua sessão expirou", 401);
     }
     const message = errorMessage(response.status, data?.message);

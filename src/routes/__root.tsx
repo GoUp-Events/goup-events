@@ -85,7 +85,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { title: "GoUp Events — Descubra Blumenau" },
       {
         name: "description",
-        content: "Eventos e experiências em Blumenau e região. Vá. Viva. GoUp.",
+        content: "Eventos e experiências em Blumenau e região. Seu próximo evento pode estar no GoUp.",
       },
       { property: "og:title", content: "GoUp Events — Descubra Blumenau" },
       { property: "og:description", content: "Encontre seu próximo momento em Blumenau e região." },

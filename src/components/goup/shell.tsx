@@ -139,9 +139,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
                 <MapPin className="inline size-3 mr-1" /> BLUMENAU É NOSSO LUGAR
               </h4>
               <div className="footer-motto">
-                Vá. Viva.
-                <br />
-                <Brand />.
+                Seu próximo evento pode estar no GoUp
               </div>
             </div>
           </div>
