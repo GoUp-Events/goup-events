@@ -55,7 +55,7 @@ export function PlansPage() {
                   </Button>
                 ) : (
                   <Button asChild variant="outline" className="w-full">
-                    <Link to="/cadastro">
+                    <Link to="/eventos">
                       Começar a descobrir <ArrowRight />
                     </Link>
                   </Button>
