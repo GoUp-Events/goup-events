@@ -59,9 +59,8 @@ Este repositório é o **front-end**. O back-end está em [GoUp-Events/GoUp-Even
  
 Só é necessário se você quiser rodar o código na sua máquina. Para apenas usar o GoUp, ignore esta seção.
  
-<details>
-<summary><b>Rodar o front-end localmente</b></summary>
-<br>
+### Rodar o front-end localmente
+ 
 Pré-requisito: [Bun](https://bun.sh/) ou Node.js com npm.
  
 ```bash
@@ -89,10 +88,8 @@ VITE_API_BASE_URL=http://localhost:8080
 | `npm run format`  | Formata o código com Prettier |
 | `npm run test`    | Executa os testes             |
  
-</details>
-<details>
-<summary><b>Estrutura do projeto</b></summary>
-<br>
+### Estrutura do projeto
+ 
 ```
 src/
 ├── routes/            # Páginas (uma por arquivo): eventos, mapa, favoritos, planos, descoberta...
@@ -106,20 +103,16 @@ src/
 └── test/              # Testes
 ```
  
-</details>
-<details>
-<summary><b>Integração com a API</b></summary>
-<br>
+### Integração com a API
+ 
 O front usa diretamente os endpoints REST do back-end, concentrados em `src/lib/api.ts`.
  
 - `GET /events` aceita `q`, `city`, `categoryId`, `categoryIds`, `dateFrom`, `dateTo`, `maxPrice`, `freeOnly`, `ageRating` e `sort`. Os filtros da página de eventos ficam na URL.
 - O formulário de evento usa `GET /locations/autocomplete?q=...` (com JWT) e envia apenas o `placeId` escolhido no `POST`/`PUT` de eventos.
 - As categorias vêm de `GET /categories`.
 - A autenticação usa JWT, enviado no header `Authorization: Bearer ...`. Se a API responde 401, o front limpa a sessão e avisa que ela expirou.
-</details>
-<details>
-<summary><b>Variáveis de ambiente</b></summary>
-<br>
+### Variáveis de ambiente
+ 
 | Ambiente                    | Variável                                                                | Finalidade                                                                                     |
 | --------------------------- | ----------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
 | Frontend (local ou Lovable) | `VITE_API_BASE_URL`                                                     | URL pública da API. Opcional; padrão: `https://goup-events-backend-production.up.railway.app`. |
@@ -131,17 +124,14 @@ O front usa diretamente os endpoints REST do back-end, concentrados em `src/lib/
  
 A chave do Google fica somente no back-end. **Nunca** configure variáveis `VITE_` com segredos: elas ficam visíveis no navegador.
  
-</details>
-<details>
-<summary><b>Como testar o fluxo completo</b></summary>
-<br>
+### Como testar o fluxo completo
+ 
 Execute `npm run lint` e `npm run build`. Depois:
  
 1. Entre na conta e abra **Criar evento**.
 2. Digite pelo menos três caracteres do nome do local, escolha uma sugestão, preencha os demais campos e salve.
 3. Em **Explorar eventos**, combine cidade, categoria, datas e demais filtros.
 4. Copie a URL e confira que ela reabre a mesma pesquisa.
-</details>
 ---
  
 ## Sobre
