@@ -503,6 +503,15 @@ a {
 .event-card.ended:hover {
   opacity: 0.82;
 }
+.event-card.cancelled,
+.event-card.cancelled:hover {
+  opacity: 1;
+  background: color-mix(in srgb, var(--card) 88%, var(--foreground));
+}
+.event-card.cancelled .event-ended-badge {
+  color: var(--primary);
+  border: 1px solid var(--primary);
+}
 .event-ended-badge {
   position: absolute;
   top: 14px;
@@ -784,10 +793,12 @@ a {
   font-weight: 400;
   min-height: 48px;
 }
-.field input[type="date"] {
+.field input[type="date"],
+.field input[type="time"] {
   color-scheme: light;
 }
-.dark .field input[type="date"] {
+.dark .field input[type="date"],
+.dark .field input[type="time"] {
   color-scheme: dark;
 }
 .place-search {

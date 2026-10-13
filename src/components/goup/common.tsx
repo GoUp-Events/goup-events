@@ -61,11 +61,13 @@ export function EventCard({ event }: { event: Event }) {
   const cancelled = event.status === "CANCELLED";
   const ended = event.ended || event.status === "FINISHED";
   return (
-    <article className={`event-card${cancelled || ended ? " ended" : ""}`}>
+    <article className={`event-card${cancelled || ended ? " ended" : ""}${cancelled ? " cancelled" : ""}`}>
       <div className="relative">
         <EventCover event={event} />
         {(cancelled || ended) && (
-          <span className="event-ended-badge">{cancelled ? "Cancelado" : "Encerrado"}</span>
+          <span className="event-ended-badge">
+            {cancelled ? "Esse evento foi cancelado!" : "Encerrado"}
+          </span>
         )}
         <Button
           size="icon"
